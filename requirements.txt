@@ -4,3 +4,6 @@ accelerate==0.24.1
 gradio==4.4.0
 unstructured==0.10.30
 markdown==3.3.7
+sentencepiece==0.1.99
+numpy
+tqdm
