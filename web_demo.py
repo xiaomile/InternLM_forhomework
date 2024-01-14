@@ -18,23 +18,28 @@ from tools.transformers.interface import GenerationConfig, generate_interactive
 
 logger = logging.get_logger(__name__)
 
+from openxlab.model import download
+
+download(model_repo='xiaomile/personal_assistant2', output='xiaomile')
+# download(model_repo='OpenLMLab/InternLM-chat-7b-8k', output='internlm')
 
 def on_btn_click():
     del st.session_state.messages
 
 
 @st.cache_resource
-def load_model():
+def load_model(model_dir):
     model = (
-        AutoModelForCausalLM.from_pretrained("internlm/internlm-chat-7b", trust_remote_code=True)
+        AutoModelForCausalLM.from_pretrained(model_dir, trust_remote_code=True)
         .to(torch.bfloat16)
         .cuda()
     )
-    tokenizer = AutoTokenizer.from_pretrained("internlm/internlm-chat-7b", trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained(model_dir, trust_remote_code=True)
     return model, tokenizer
 
 
 def prepare_generation_config():
+    model_choose = ''
     with st.sidebar:
         max_length = st.slider("Max Length", min_value=32, max_value=2048, value=2048)
         top_p = st.slider("Top P", 0.0, 1.0, 0.8, step=0.01)
@@ -43,7 +48,7 @@ def prepare_generation_config():
 
     generation_config = GenerationConfig(max_length=max_length, top_p=top_p, temperature=temperature)
 
-    return generation_config
+    return generation_config, model_choose
 
 
 user_prompt = "<|User|>:{user}\n"
@@ -68,17 +73,19 @@ def combine_history(prompt):
 
 
 def main():
-    # torch.cuda.empty_cache()
-    print("load model begin.")
-    model, tokenizer = load_model()
-    print("load model end.")
-
     user_avator = "doc/imgs/user.png"
     robot_avator = "doc/imgs/robot.png"
 
     st.title("InternLM-Chat-7B")
 
-    generation_config = prepare_generation_config()
+    generation_config, model_choose = prepare_generation_config()
+
+    # torch.cuda.empty_cache()
+    print("load model begin.")
+    
+    model, tokenizer = load_model('xiaomile')
+    print("load model end.")
+
 
     # Initialize chat history
     if "messages" not in st.session_state:
