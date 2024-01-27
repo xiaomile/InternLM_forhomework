@@ -20,7 +20,7 @@ logger = logging.get_logger(__name__)
 
 from openxlab.model import download
 
-download(model_repo='xiaomile/personal_assistant2', output='xiaomile')
+download(model_repo='xiaomile/ChineseMedicalAssistant', output='xiaomile')
 # download(model_repo='OpenLMLab/InternLM-chat-7b-8k', output='internlm')
 
 def on_btn_click():
