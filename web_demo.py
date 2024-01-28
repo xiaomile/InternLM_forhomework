@@ -83,7 +83,7 @@ def convertResponse(cur_response):
     elif new_response["question_type"] == "cure":
         return new_response["name"]+"所属的功效是"+new_response["answer"]
     else:
-        return "小助手未能查到相关资料，请提供更详细的信息"
+        return new_response["answer"]
 
 def main():
     user_avator = "doc/imgs/user.png"
