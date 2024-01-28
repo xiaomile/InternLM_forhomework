@@ -106,7 +106,7 @@ def main():
     user_avator = "doc/imgs/user.png"
     robot_avator = "doc/imgs/robot.png"
 
-    st.title("InternLM-Chat-7B")
+    st.title("中医药知识问答助手")
 
     generation_config, model_choose = prepare_generation_config()
 
