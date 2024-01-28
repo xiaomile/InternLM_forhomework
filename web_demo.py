@@ -9,6 +9,7 @@ Please refer to these links below for more information:
 
 from dataclasses import asdict
 
+import json
 import streamlit as st
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -71,6 +72,18 @@ def combine_history(prompt):
     total_prompt = total_prompt + cur_query_prompt.replace("{user}", prompt)
     return total_prompt
 
+def convertResponse(cur_response):
+    new_response = json.loads(cur_response)
+    if new_response["question_type"] == "smell":
+        return new_response["name"]+"的气味是"+new_response["answer"]
+    elif new_response["question_type"] == "alias":
+        return new_response["name"]+"的别名是"+new_response["answer"]
+    elif new_response["question_type"] == "part":
+        return new_response["name"]+"所属的部是"+new_response["answer"]
+    elif new_response["question_type"] == "cure":
+        return new_response["name"]+"所属的功效是"+new_response["answer"]
+    else:
+        return "小助手未能查到相关资料，请提供更详细的信息"
 
 def main():
     user_avator = "doc/imgs/user.png"
@@ -118,7 +131,8 @@ def main():
                 message_placeholder.markdown(cur_response + "▌")
             message_placeholder.markdown(cur_response)
         # Add robot response to chat history
-        st.session_state.messages.append({"role": "robot", "content": cur_response, "avatar": robot_avator})
+        new_response = convertResponse(cur_response)
+        st.session_state.messages.append({"role": "robot", "content": new_response, "avatar": robot_avator})
         torch.cuda.empty_cache()
 
 
