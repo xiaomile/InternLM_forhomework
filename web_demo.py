@@ -95,6 +95,12 @@ def convertMessage(cur_Message):
         print(str(e))
         return cur_Message
 
+def preprocessMessage(message):
+    if '"answer": "' in message:
+        return message[message.find('"answer": "')+len('"answer": "'):].replace('"}','')
+    else:
+        return ""
+
 def main():
     user_avator = "doc/imgs/user.png"
     robot_avator = "doc/imgs/robot.png"
@@ -138,8 +144,7 @@ def main():
                 **asdict(generation_config),
             ):
                 # Display robot response in chat message container
-                # message_placeholder.markdown(cur_response + "▌")
-                pass
+                message_placeholder.markdown(preprocessMessage(cur_response) + "▌")
             # message_placeholder.markdown(cur_response)
             new_response = convertMessage(cur_response)
             message_placeholder.markdown(new_response)
