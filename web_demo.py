@@ -72,18 +72,28 @@ def combine_history(prompt):
     total_prompt = total_prompt + cur_query_prompt.replace("{user}", prompt)
     return total_prompt
 
-def convertResponse(cur_response):
-    new_response = json.loads(cur_response)
-    if new_response["question_type"] == "smell":
-        return new_response["name"]+"的气味是"+new_response["answer"]
-    elif new_response["question_type"] == "alias":
-        return new_response["name"]+"的别名是"+new_response["answer"]
-    elif new_response["question_type"] == "part":
-        return new_response["name"]+"所属的部是"+new_response["answer"]
-    elif new_response["question_type"] == "cure":
-        return new_response["name"]+"所属的功效是"+new_response["answer"]
-    else:
-        return new_response["answer"]
+def convertMessage(cur_Message):
+    try:
+        new_message = json.loads(cur_Message)
+        # print(new_message)
+        if "question_type" in new_message.keys():
+            if new_message["question_type"] == "smell":
+                return new_message["name"]+"的气味是"+new_message["answer"]
+            elif new_message["question_type"] == "alias":
+                return new_message["name"]+"的别名是"+new_message["answer"]
+            elif new_message["question_type"] == "part":
+                return new_message["name"]+"所属的部是"+new_message["answer"]
+            elif new_message["question_type"] == "cure":
+                return new_message["name"]+"的功效是"+new_message["answer"]
+            elif new_message["question_type"] == "symptom":
+                return "治疗"+new_message["name"]+"的药方有"+new_message["answer"]
+            else:
+                return new_message["answer"]
+        else:
+            return new_message["answer"]
+    except Exception as e:
+        print(str(e))
+        return cur_Message
 
 def main():
     user_avator = "doc/imgs/user.png"
@@ -128,10 +138,12 @@ def main():
                 **asdict(generation_config),
             ):
                 # Display robot response in chat message container
-                message_placeholder.markdown(cur_response + "▌")
-            message_placeholder.markdown(cur_response)
+                # message_placeholder.markdown(cur_response + "▌")
+                pass
+            # message_placeholder.markdown(cur_response)
+            new_response = convertMessage(cur_response)
+            message_placeholder.markdown(new_response)
         # Add robot response to chat history
-        new_response = convertResponse(cur_response)
         st.session_state.messages.append({"role": "robot", "content": new_response, "avatar": robot_avator})
         torch.cuda.empty_cache()
 
