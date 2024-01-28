@@ -146,12 +146,13 @@ def main():
                 **asdict(generation_config),
             ):
                 # Display robot response in chat message container
-                message_placeholder.markdown(preprocessMessage(cur_response) + "▌")
-            # message_placeholder.markdown(cur_response)
-            new_response = convertMessage(cur_response)
-            message_placeholder.markdown(new_response)
+                # message_placeholder.markdown(preprocessMessage(cur_response) + "▌")
+                message_placeholder.markdown(cur_response + "▌")
+            message_placeholder.markdown(cur_response)
+            # new_response = convertMessage(cur_response)
+            # message_placeholder.markdown(new_response)
         # Add robot response to chat history
-        st.session_state.messages.append({"role": "robot", "content": new_response, "avatar": robot_avator})
+        st.session_state.messages.append({"role": "robot", "content": cur_response, "avatar": robot_avator})
         torch.cuda.empty_cache()
 
 
